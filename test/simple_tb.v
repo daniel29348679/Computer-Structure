@@ -7,8 +7,8 @@ initial
 		//$dumpfile("simple.vcd");
 		//$dumpvars(0, s);
 		clk = 0;
-		$monitor("sum = %d ",sum);
-		#50 $finish;
+		$monitor("sum = %b ",sum);
+		#500 $finish;
 	end
 
 	always #5 clk = ~clk;
