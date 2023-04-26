@@ -1,11 +1,12 @@
 VERILOG = iverilog
-TARGET = simple.vcd
+TARGET = tb_ALU.vcd
 
-$(TARGET) : simple.vvp
-	vvp simple.vvp
+$(TARGET) : tb_ALU.vvp
+	vvp tb_ALU.vvp
+	-del -f tb_ALU.vvp
 
-simple.vvp: simple_tb.v simple.v
-	$(VERILOG) -o simple.vvp simple_tb.v simple.v
+tb_ALU.vvp:
+	$(VERILOG) -o tb_ALU.vvp *.v
 
 clean:
-	rm $(TARGET)
+	-del -f $(TARGET) tb_ALU.vvp
