@@ -31,7 +31,12 @@ module ALU (
     wire [31:0] sum, wireand, wireor, ans;
     wire [32:0] carry;
     wire [31:0] sltsignal;
-    assign sltsignal = 32'b1;
+    Mux_2to1_array mux_2to1_array (
+        sltsignal,
+        sum[31],
+        32'b0,
+        32'b1
+    );
 
     assign a = dataA;
 
@@ -45,6 +50,8 @@ module ALU (
     assign isand = (Signal == AND);
     assign isslt = (Signal == SLT);
 
+    wire [1:0] select;
+    assign select = isslt ? 3 : (isadd || issub) ? 0 : isor ? 1 : 2;
 
     genvar i;
     generate
@@ -59,11 +66,17 @@ module ALU (
             xor (b[i], dataB[i], issub);
             and (wireand[i], a[i], b[i]);
             or (wireor[i], a[i], b[i]);
-
-            assign ans[i] = sum[i]&isadd|sum[i]&issub|wireor[i]&isor|wireand[i]&isand|sltsignal[i]&isslt&sum[31];
-
         end
     endgenerate
+
+    Mux_4to1_array mux_4to1_array (
+        ans,
+        select,
+        sum,
+        wireor,
+        wireand,
+        sltsignal
+    );
 
     assign dataOut = ans;
 

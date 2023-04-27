@@ -22,30 +22,27 @@ module Shifter (
     generate
         for (i = 0; i < 5; i = i + 1) begin
             for (j = 0; j + 2 ** (i) < 32; j = j + 1) begin
-                assign temp[i+1][j] = temp[i][j+2**(i)] & dataB[i] | temp[i][j] & ~dataB[i];
+                //assign temp[i+1][j] = temp[i][j+2**(i)] & dataB[i] | temp[i][j] & ~dataB[i];
+                Mux_2to1 mux2to1 (
+                    temp[i+1][j],
+                    dataB[i],
+                    temp[i][j],
+                    temp[i][j+2**(i)]
+                );
             end
             for (j = 32 - 2 ** (i); j < 32; j = j + 1) begin
-                assign temp[i+1][j] = temp[i][j] & ~dataB[i];
+                //assign temp[i+1][j] = temp[i][j] & ~dataB[i];
+                Mux_2to1 mux2to1 (
+                    temp[i+1][j],
+                    dataB[i],
+                    temp[i][j],
+                    1'b0
+                );
             end
         end
     endgenerate
 
     assign dataOut = temp[5];
-    /*
-=====================================================
-上面為模擬範例，程式撰寫請遵照老師上課說明的方法來寫
-=====================================================
-*/
+
 
 endmodule
-/*
-		for(i = 0 ; i < 5;i=i+1)begin
-			for(j = 0 ; j+k < 32;j=j+1)begin
-				assign temp[i+1][j] = temp[i][j+k];
-			end
-			for(j = j; j< 32;j=j+1)begin	
-				assign temp[i+1][j] = temp[i][31];
-			end
-			k = k * 2;
-		end
-		*/
