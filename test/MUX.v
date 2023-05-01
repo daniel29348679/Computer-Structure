@@ -36,19 +36,29 @@ module MUX (
     assign lo   = Signal == MFLO;
     assign shif = Signal == SRL;
 
+    wire [1:0] select;
+    assign select = alu ? 0 : (hi ? 1 : (lo ? 2 : 3));
+
+
+    /*
     genvar i;
     generate
         for (i = 0; i < 32; i = i + 1) begin
             assign temp[i] = ALUOut[i] & alu | HiOut[i] & hi | LoOut[i] & lo | Shifter[i] & shif;
         end
     endgenerate
+    */
 
+    Mux_4to1_array mux_4to1_array (
+        temp,
+        select,
+        ALUOut,
+        HiOut,
+        LoOut,
+        Shifter
+    );
 
     assign dataOut = temp;
-    /*
-=====================================================
-上面為模擬範例，程式撰寫請遵照老師上課說明的方法來寫
-=====================================================
-*/
+
 
 endmodule
