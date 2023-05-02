@@ -44,14 +44,48 @@ module ALU (
 
 
     wire isadd, issub, isor, isand, isslt;
-    assign isadd = (Signal == ADD);
-    assign issub = (Signal == SUB) || (Signal == SLT);
-    assign isor  = (Signal == OR);
-    assign isand = (Signal == AND);
-    assign isslt = (Signal == SLT);
+    //assign isadd = (Signal == ADD);
+    Equal_array_6 equal_array_6_0 (
+        isadd,
+        Signal,
+        ADD
+    );
+
+    //assign issub = (Signal == SUB) || (Signal == SLT);
+    wire isjustsub;
+    Equal_array_6 equal_array_6_1 (
+        isjustsub,
+        Signal,
+        SUB
+    );
+    or (issub, isjustsub, isslt);
+
+    //assign isor  = (Signal == OR);
+    Equal_array_6 equal_array_6_2 (
+        isor,
+        Signal,
+        OR
+    );
+
+    //assign isand = (Signal == AND);
+    Equal_array_6 equal_array_6_3 (
+        isand,
+        Signal,
+        AND
+    );
+
+    //assign isslt = (Signal == SLT);
+    Equal_array_6 equal_array_6_4 (
+        isslt,
+        Signal,
+        SLT
+    );
 
     wire [1:0] select;
-    assign select = isslt ? 3 : (isadd || issub) ? 0 : isor ? 1 : 2;
+    //assign select = isslt ? 3 : (isadd || issub) ? 0 : isor ? 1 : 2;
+    or (select[1], isslt, isand);
+    or (select[0], isslt, isor);
+
 
     genvar i;
     generate
