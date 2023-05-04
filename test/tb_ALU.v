@@ -16,29 +16,15 @@ module tb_ALU ();
         inputA <= 0;
         inputB <= 0;
         ctrl   <= 0;
-        //$dumpfile("test.vcd");
-        //$dumpvars(2, alu);
+        $dumpfile("test.vcd");
+        $dumpvars(2, alu);
         eof = 0;
         rst = 1'b1;
         #10;
         rst = 1'b0;
-        /*
-			Ū����J���O�A�ɦW"input.txt"�i�ۦ�ק�
-			�C�@�欰�@����J
-			�榡���G����T��  InputA  InputB
-		*/
         fp_r = $fopen("input.txt", "r");
-        /*
-			Ū�����סA�ɦW"ans.txt"�i�ۦ�ק�
-			�C�@�欰�@�����T����
-		*/
+
         fp_r_ans = $fopen("ans.txt", "r");
-        /*
-			�ۦ��}�l����ALU�ä���X���G
-			�p���G���T�A�N��X�G"Correct"
-			�����T�N��X���浲�G�P���T����
-			�H�W��X���Ĥ@�ӼƦr��cycle number
-		*/
         $display("Start\n");
         eof = $fscanf(fp_r_ans, "%d", ans);
         while (eof != -1) begin
@@ -56,10 +42,6 @@ module tb_ALU ();
             if (ctrl == 32'd27) begin
                 #330;
                 $display("%d: Div End\n", $time / 10);
-                /*
-					���k�����浲����A���צs��Hi-Lo�Ȧs��
-					�H�U�۰ʲ���MFHI, MFLO���O�ˬd���k�B�⵲�G
-				*/
                 #10;
                 #10;
 
@@ -101,10 +83,6 @@ module tb_ALU ();
             end else if (ctrl == 32'd25) begin
                 #330;
                 $display("%d: MUL End\n", $time / 10);
-                /*
-					���k�����浲����A���צs��Hi-Lo�Ȧs��
-					�H�U�۰ʲ���MFHI, MFLO���O�ˬd���k�B�⵲�G
-				*/
                 #10;
                 #10;
 
