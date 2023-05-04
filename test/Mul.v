@@ -21,9 +21,6 @@ module Mul (
     assign {hi, lo} = temp;
 
 
-
-
-
     always @(posedge firstart) begin
         temp <= 0;
         mpr  <= dataB;
@@ -32,7 +29,8 @@ module Mul (
 
     always @(negedge clk) begin
 
-        if (mpr[0]) temp = temp + mcnd;
+        //if (mpr[0]) temp = temp + mcnd;
+        temp = temp + (mcnd & {64{mpr[0]}});
         mcnd <= mcnd << 1;
         mpr  <= mpr >> 1;
     end
