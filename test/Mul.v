@@ -15,11 +15,11 @@ module Mul (
     input [31:0] dataB;
     input [5:0] Signal;
     output [63:0] dataOut;
-
-    wire [31:0] hi, lo;
-    assign {hi, lo} = temp;
     reg [63:0] temp, mcnd;
     reg [31:0] mpr;
+    wire [31:0] hi, lo;
+    assign {hi, lo} = temp;
+
 
 
 
