@@ -39,11 +39,10 @@ module ALU (
     );
 
     assign a = dataA;
-
+    wire isadd, issub, isor, isand, isslt;
     assign carry[0] = issub;
 
 
-    wire isadd, issub, isor, isand, isslt;
     //assign isadd = (Signal == ADD);
     Equal_array_6 equal_array_6_0 (
         isadd,
