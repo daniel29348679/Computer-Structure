@@ -4,7 +4,7 @@ module ALUControl (
     Signal,
     SignaltoALU,
     SignaltoSHT,
-    SignaltoDIV,
+    SignaltoMUL,
     SignaltoMUX,
     mulreset
 );
@@ -12,7 +12,7 @@ module ALUControl (
     input [5:0] Signal;
     output [5:0] SignaltoALU;
     output [5:0] SignaltoSHT;
-    output [5:0] SignaltoDIV;
+    output [5:0] SignaltoMUL;
     output [5:0] SignaltoMUX;
     output reg mulreset;
 
@@ -66,14 +66,14 @@ module ALUControl (
             end
         end
         /*
-¼Æ32­ÓclkµM«á¶}±ÒHiLo¼È¦s¾¹µ¹°£ªk¾¹©ñ­È¶i¥h
+ï¿½ï¿½32ï¿½ï¿½clkï¿½Mï¿½ï¿½}ï¿½ï¿½HiLoï¿½È¦sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½kï¿½ï¿½ï¿½ï¿½È¶iï¿½h
 */
     end
 
 
     assign SignaltoALU = temp;
     assign SignaltoSHT = temp;
-    assign SignaltoDIV = temp;
+    assign SignaltoMUL = temp;
     assign SignaltoMUX = temp;
 
 

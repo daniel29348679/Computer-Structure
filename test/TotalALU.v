@@ -39,11 +39,11 @@ module TotalALU (
 
     wire [5:0] SignaltoALU;
     wire [5:0] SignaltoSHT;
-    wire [5:0] SignaltoDIV;
+    wire [5:0] SignaltoMUL;
     wire [5:0] SignaltoMUX;
     wire [31:0] ALUOut, HiOut, LoOut, ShifterOut;
     wire [31:0] dataOut;
-    wire [63:0] DivAns;
+    wire [63:0] MulAns;
     wire mulreset;
 
 
@@ -55,7 +55,7 @@ module TotalALU (
         .Signal(Signal),
         .SignaltoALU(SignaltoALU),
         .SignaltoSHT(SignaltoSHT),
-        .SignaltoDIV(SignaltoDIV),
+        .SignaltoMUL(SignaltoMUL),
         .SignaltoMUX(SignaltoMUX),
         .mulreset(mulreset)
     );
@@ -66,23 +66,13 @@ module TotalALU (
         .dataOut(ALUOut),
         .reset  (reset)
     );
-    /*
-    Divider Divider (
-        .clk(clk),
-        .dataA(dataA),
-        .dataB(dataB),
-        .Signal(SignaltoDIV),
-        .dataOut(DivAns),
-        .reset(reset)
-    );
-    */
     Mul mul (
         .firstart(mulreset),
         .clk(clk),
         .dataA(dataA),
         .dataB(dataB),
-        .Signal(SignaltoDIV),
-        .dataOut(DivAns),
+        .Signal(SignaltoMUL),
+        .dataOut(MulAns),
         .reset(reset)
     );
     Shifter Shifter (
@@ -94,7 +84,7 @@ module TotalALU (
     );
     HiLo HiLo (
         .clk(clk),
-        .DivAns(DivAns),
+        .MulAns(MulAns),
         .HiOut(HiOut),
         .LoOut(LoOut),
         .reset(reset)

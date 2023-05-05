@@ -6,7 +6,7 @@ module tb_ALU ();
     wire [31:0] out;
     integer fp_r, fp_r_ans, eof, e;
 
-    // ���ͮɯߡA�g���G10ns
+
     initial begin
         clk = 1'b1;
         forever #5 clk = ~clk;
@@ -39,48 +39,7 @@ module tb_ALU ();
             else if (ctrl == 6'd27) $write("DIVU(%d) ", ctrl);
             else if (ctrl == 6'd25) $write("MULTU(%d) ", ctrl);
             $display("%d%d", inputA, inputB);
-            if (ctrl == 32'd27) begin
-                #330;
-                $display("%d: Div End\n", $time / 10);
-                #10;
-                #10;
-
-                $display("                   Move Hi");
-                ctrl = 6'd16;
-                #10;
-                if (ans == out)
-                    $display(
-                        "%d: Correct: Your answer is:%d,\n                                 Correct answer is:%d\n",
-                        $time / 10,
-                        out,
-                        ans
-                    );
-                else
-                    $display(
-                        "%d: Wrong Answer: Your answer is:%d,\n                                             Correct answer is:%d\n",
-                        $time / 10,
-                        out,
-                        ans
-                    );
-                $display("                   Move Lo");
-                ctrl = 6'd18;
-                eof  = $fscanf(fp_r_ans, "%d", ans);
-                #10;
-                if (ans == out)
-                    $display(
-                        "%d: Correct: Your answer is:%d,\n                                 Correct answer is:%d\n",
-                        $time / 10,
-                        out,
-                        ans
-                    );
-                else
-                    $display(
-                        "%d: Wrong Answer: Your answer is:%d,\n                                             Correct answer is:%d\n",
-                        $time / 10,
-                        out,
-                        ans
-                    );
-            end else if (ctrl == 32'd25) begin
+            if (ctrl == 32'd25) begin
                 #330;
                 $display("%d: MUL End\n", $time / 10);
                 #10;

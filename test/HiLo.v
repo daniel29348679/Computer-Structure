@@ -1,14 +1,14 @@
 `timescale 1ns / 1ns
 module HiLo (
     clk,
-    DivAns,
+    MulAns,
     HiOut,
     LoOut,
     reset
 );
     input clk;
     input reset;
-    input [63:0] DivAns;
+    input [63:0] MulAns;
     output [31:0] HiOut;
     output [31:0] LoOut;
 
@@ -17,7 +17,7 @@ module HiLo (
         if (reset) begin
             HiLo <= 64'b0;
         end else begin
-            HiLo <= DivAns;
+            HiLo <= MulAns;
         end
     end
 
