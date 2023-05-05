@@ -17,7 +17,7 @@ module tb_ALU ();
         inputB <= 0;
         ctrl   <= 0;
         $dumpfile("test.vcd");
-        $dumpvars(2, alu);
+        $dumpvars(3, alu);
         eof = 0;
         rst = 1'b1;
         #10;

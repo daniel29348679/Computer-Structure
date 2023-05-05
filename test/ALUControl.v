@@ -61,12 +61,12 @@ module ALUControl (
                 mulreset <= 0;
             end
             if (counter == 32) begin
-                temp = 6'b111111;  // Open HiLo reg for Div
-                counter = 0;
+                temp <= 6'b111111;  // Open HiLo reg for Div
+                counter <= 0;
             end
         end
         /*
-��32��clk�M��}��HiLo�Ȧs�������k����ȶi�h
+��32��clk�M��}��HiLo�Ȧs�������k����?�i�h
 */
     end
 
