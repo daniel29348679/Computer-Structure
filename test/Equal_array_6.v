@@ -9,9 +9,17 @@ module Equal_array_6 (
     wire [5:0] eor;
 
     genvar i;
+    /*
     for (i = 0; i < 6; i = i + 1) begin
         xor (eor[i], a[i], b[i]);
     end
+    */
+    xor (eor[0], a[0], b[0]);
+    xor (eor[1], a[1], b[1]);
+    xor (eor[2], a[2], b[2]);
+    xor (eor[3], a[3], b[3]);
+    xor (eor[4], a[4], b[4]);
+    xor (eor[5], a[5], b[5]);
 
     wire [5:0] eq;
 
