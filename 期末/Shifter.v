@@ -5,7 +5,7 @@ module Shifter (
     dataOut
 );
     input [31:0] dataA;
-    input [31:0] dataB;
+    input [4:0] dataB;
     output [31:0] dataOut;
 
 
