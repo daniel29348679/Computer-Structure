@@ -1,7 +1,6 @@
 module Cpu (
     clka,
-    clkb,
-    clkc
+    clkb
 );
     input wire clka, clkb, clkc;
     reg [31:0] ram[127:0];
@@ -20,52 +19,97 @@ module Cpu (
     wire [6:0] pc;
     assign pc = register[31][8:2];
 
+    reg [31:0] aludataOut_delaytemp;
+    reg [31:0] immediate, immediate_delay1, immediate_delay2, immediate_delay3;
+    reg iszero_delay1, iszero_delay2, iszero_delay3;
+    wire [31:0] alusrc;
+    assign alusrc = (instruction[1][31:26] == 0 || instruction[1][31:26] == 4||instruction[1][31:26] == 28) ? rt : {32'b0, immediate};
 
+    reg [31:0] rt_delaytemp;
     always @(posedge clka) begin
         // ram to IF
-        instruction[0] <= ram[pc];
+        instruction[0]       <= ram[pc];
 
         // IF to ID
-        instruction[1] <= instruction[0];
-        rs <= register[instruction[0][25:21]];
-        rt <= register[instruction[0][20:16]];
-        shamt <= instruction[0][10:6];
-        Signal <= instruction[0][5:0];
+        instruction[1]       <= instruction[0];
+        rs                   <= register[instruction[0][25:21]];
+        rt                   <= register[instruction[0][20:16]];
+        shamt                <= instruction[0][10:6];
+        Signal               <= instruction[0][5:0];
+        immediate            <= {{16{instruction[0][15]}}, instruction[0][15:0]};
 
         // ID to EX
-        instruction[2] <= instruction[1];
+        instruction[2]       <= instruction[1];
+        rt_delaytemp         <= rt;
+        immediate_delay1     <= immediate;
 
         // EX to MEM
-        instruction[3] <= instruction[2];
+        instruction[3]       <= instruction[2];
+        aludataOut_delaytemp <= aludataOut;
+        immediate_delay2     <= immediate_delay1;
+        iszero_delay1        <= iszero;
+
 
         // MEM to WB
-        instruction[4] <= instruction[3];
-        if ((instruction[3][31:26] == 0) && instruction[3][5:0] != 0)
-            register[instruction[3][15:11]] <= aludataOut;
-
+        instruction[4]       <= instruction[3];
+        if (instruction[3] != 0 && (instruction[3][31:26] == 0 || instruction[3][31:26] == 35 || instruction[3][31:26] == 9)&&instruction[3][31:26] !=25) begin
+            if (instruction[3][31:26] == 35) register[instruction[3][20:16]] <= memoryrd;
+            else if (instruction[3][31:26] == 9)
+                register[instruction[3][20:16]] <= aludataOut_delaytemp;
+            else register[instruction[3][15:11]] <= aludataOut_delaytemp;
+        end
         // pc += 4
-        register[31] <= register[31] + 4;
+        //register[31] <= register[31] + 4;
+        if ((instruction[3][31:26] == 4) && (iszero_delay1 == 1)) begin
+            $display("beq, time = %d, immediate_delay = %d !!!!!!!!!!!!!\n", $time,
+                     immediate_delay2);
+            register[31] <= (register[31] + 4) + (immediate_delay2 << 2);
+        end else if (instruction[3][31:26] == 2) begin
+            register[31][27:2] <= instruction[3][25:0];
+            register[31][1:0]  <= 2'b00;
+        end else register[31] <= register[31] + 4;
     end
 
-    reg [31:0] rs, rt;
-    reg  [ 4:0] shamt;
-    wire [63:0] hilo;
-    assign hilo = 64'b11111111111111111111111111111111_00000000000000000000000000000111;
-    reg  [ 5:0] Signal;
-    wire [31:0] aludataOut;
 
+
+    reg [31:0] rs, rt;
+    reg [4:0] shamt;
+    wire [63:0] hilo;
+    reg [5:0] Signal;
+    wire [31:0] aludataOut;
+    wire iszero;
     ALU alu (
         clka,
+        (instruction[2][31:26] == 35 || instruction[2][31:26] == 43 || instruction[2][31:26] == 4|| instruction[2][31:26] == 9),
         rs,
-        rt,
+        alusrc,
         Signal,
         shamt,
         hilo,
-        aludataOut
+        aludataOut,
+        iszero
+    );
+
+    wire [31:0] memoryrd;
+
+    Memory memory (
+        clka,
+        (instruction[2][31:26] == 35),
+        (instruction[2][31:26] == 43),
+        rt_delaytemp,
+        aludataOut,
+        memoryrd
     );
 
 
-
+    Mul mul (
+        clka,
+        clkb,
+        rs,
+        rt,
+        instruction[1],
+        hilo
+    );
 
     integer i;
     initial begin
@@ -83,14 +127,32 @@ module Cpu (
         ram[3] = 32'b000000_00000_01011_01011_00010_000010;  // srl $11, 2
         ram[4] = 32'b000000_00000_00000_01100_00000_010000;  // mohi $12
         ram[5] = 32'b000000_00000_00000_01101_00000_010010;  // molo $13  
+        ram[6] = 32'b101011_00111_00011_0000000000001111;  // sw $zero 0x000f $zero
+        ram[7] = 32'b101011_00000_01100_0000000000000000;  // sw $t4 0x0000 $zero | sw $12 0x0000 $0
+        ram[8] = 32'b101011_00000_01100_0000000000000000;  // sw $t4 0x0000 $zero | sw $12 0x0000 $0
+        ram[9] = 32'b100011_00000_01110_0000000000000000;  //lw $14 0x0000 $0
+        ram[10] = 32'b100011_00000_01111_0000000000010110;  //lw $15 0x0000 $0
+        ram[11] = 32'b001001_11110_11110_0000000100000000; //addiu $fp, $fp, 0x00100 | addiu $30, $30, 0x00100
+        ram[12] = 32'b000100_00001_00010_0000000000000000;  //beq $1, $0, 1
+        ram[13] = 32'b00000000000000000000000000000000;  //nop
+        ram[14] = 32'b00000000000000000000000000000000;  //nop
+        ram[15] = 32'b00000000000000000000000000000000;  //nop
+        ram[16] = 32'b00000000000000000000000000000000;  //nop
+        ram[17] = 32'b000100_00001_01011_0000000000000011;  //beq $1, $10, 3
+        ram[18] = 32'b000000_00101_00110_0000000000_011001;  //mul $5, $6
+        ram[19] = 32'b000000_00000_00000_10100_00000_010010;  // movlo $20 
+        ram[20] = 32'b000000_00000_00000_10101_00000_010000;  // movhi $21
+        ram[21] = 32'b011100_00101_00110_0000000000_000100;  //maddu $5, $6
+        ram[22] = 32'b000000_00000_00000_10110_00000_010010;  // movlo $22 
+        ram[23] = 32'b000000_00000_00000_10111_00000_010000;  // movhi $23
+        //ram[18] = 32'b00001000000000000000000000010000;
 
     end
 
 
     //test--------------------------------------------------------------
     always @(posedge clka) begin
-
-        $display("\n\n---------------------------------------------");
+        #1;
         $display("time = %d ", $time);
 
         $display(
@@ -105,6 +167,7 @@ module Cpu (
             register[18], register[19], register[20], register[21], register[22], register[23],
             register[24], register[25], register[26], register[27], register[28], register[29],
             register[30], register[31]);
+        $display("\n\n---------------------------------------------");
     end
 
     //end test----------------------------------------------------------

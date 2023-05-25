@@ -1,20 +1,24 @@
 `timescale 1ns / 1ns
 module ALU (
     clk,
+    itype,
     dataA,
     dataB,
     Signal,
     shamt,
     hilo,
-    dataOut
+    dataOut,
+    zero
 );
-    input clk;
+    input clk, itype;
     input [31:0] dataA;
     input [31:0] dataB;
     input [5:0] Signal;
     input [4:0] shamt;
     input [63:0] hilo;
     output reg [31:0] dataOut;
+    output zero;
+    assign zero = iszero;
 
     //   Signal ( 6-bits)?
     //   AND  : 36
@@ -22,7 +26,7 @@ module ALU (
     //   ADD  : 32
     //   SUB  : 34
     //   SLT  : 42
-
+    reg iszero;
     reg [31:0] temp;
 
     parameter AND = 6'b100100;
@@ -30,6 +34,7 @@ module ALU (
     parameter ADD = 6'b100000;
     parameter SUB = 6'b100010;
     parameter SLT = 6'b101010;
+
 
     wire [31:0] a, b;
     wire [31:0] sum, wireand, wireor, ans;
@@ -47,12 +52,14 @@ module ALU (
     assign carry[0] = issub;
 
 
-    //assign isadd = (Signal == ADD);
+    assign isadd = (Signal == ADD) || itype;
+    /*
     Equal_array_6 equal_array_6_0 (
         isadd,
         Signal,
         ADD
     );
+    */
 
     //assign issub = (Signal == SUB) || (Signal == SLT);
     wire isjustsub;
@@ -498,10 +505,14 @@ module ALU (
                     (Signal == 16)? hilo[63:32]:
                     (Signal == 18)?hilo[31:0]:ans;
 
-    reg [31:0] datadeley0;
+    wire [31:0] ans2;
+
+    assign ans2 = itype ? sum : ans1;
+
     always @(posedge clk) begin
-        datadeley0 <= ans1;
-        dataOut <= datadeley0;
+        dataOut <= ans1;
+        iszero  <= (dataA == dataB);
+        //if (itype) $display("itype!!!!!!!!!!!!!!!!\n");
     end
 
 endmodule
