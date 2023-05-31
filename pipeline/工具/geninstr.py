@@ -114,6 +114,8 @@ def gen(ins):
 
     if op == "j":
         return 2 * 2**26 + int(ins[1 : len(ins)])
+    if op == "none":
+        return 0
 
 
 # %%
