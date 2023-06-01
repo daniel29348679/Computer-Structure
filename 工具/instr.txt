@@ -1,0 +1,25 @@
+add $2, $0, $1
+add $6, $4, $5
+sub $10, $9, $8
+srl $11, 2
+mvhi $12
+mvlo $13
+sw $3, $7, 15
+sw $12, $0, 0
+sw $12, $0, 0
+lw $14, $0, 0
+lw $15, $0, 0
+addiu $fp, $fp, 256
+beq $1, $2, 1
+none
+none
+none
+none
+beq $1, $11, 3
+multu $5, $6
+mvlo $20
+mvhi $21
+maddu $5, $6
+mvlo $22
+mvhi $23
+j 100

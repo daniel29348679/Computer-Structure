@@ -1,0 +1,125 @@
+//instruction: >>add $2, $0, $1<<
+20
+10
+01
+00
+//instruction: >>add $6, $4, $5<<
+20
+30
+85
+00
+//instruction: >>sub $10, $9, $8<<
+22
+50
+28
+01
+//instruction: >>srl $11, 2<<
+02
+58
+40
+00
+//instruction: >>mvhi $12<<
+10
+60
+00
+00
+//instruction: >>mvlo $13<<
+12
+68
+00
+00
+//instruction: >>sw $3, $7, 15<<
+0F
+00
+E3
+AC
+//instruction: >>sw $12, $0, 0<<
+00
+00
+0C
+AC
+//instruction: >>sw $12, $0, 0<<
+00
+00
+0C
+AC
+//instruction: >>lw $14, $0, 0<<
+00
+00
+0E
+8C
+//instruction: >>lw $15, $0, 0<<
+00
+00
+0F
+8C
+//instruction: >>addiu $fp, $fp, 256<<
+00
+01
+DE
+27
+//instruction: >>beq $1, $2, 1<<
+01
+00
+22
+10
+//instruction: >>none<<
+00
+00
+00
+00
+//instruction: >>none<<
+00
+00
+00
+00
+//instruction: >>none<<
+00
+00
+00
+00
+//instruction: >>none<<
+00
+00
+00
+00
+//instruction: >>beq $1, $11, 3<<
+03
+00
+2B
+10
+//instruction: >>multu $5, $6<<
+19
+00
+A6
+00
+//instruction: >>mvlo $20<<
+12
+A0
+00
+00
+//instruction: >>mvhi $21<<
+10
+A8
+00
+00
+//instruction: >>maddu $5, $6<<
+04
+00
+A6
+70
+//instruction: >>mvlo $22<<
+12
+B0
+00
+00
+//instruction: >>mvhi $23<<
+10
+B8
+00
+00
+//instruction: >>j 100<<
+64
+00
+00
+08

@@ -1,12 +1,12 @@
 VERILOG = iverilog
-TARGET = tb_ALU.vcd
+TARGET = test1.vcd
 
-$(TARGET) : tb_ALU.vvp
-	vvp tb_ALU.vvp
+$(TARGET) : test.vvp
+	vvp test.vvp
 	-del -f tb_ALU.vvp
 
-tb_ALU.vvp:
-	$(VERILOG) -o tb_ALU.vvp *.v
+test.vvp:
+	$(VERILOG) -o test.vvp *.v
 
 clean:
-	-del -f $(TARGET) tb_ALU.vvp
+	-del -f $(TARGET) test.vvp
