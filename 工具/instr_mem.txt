@@ -1,3 +1,13 @@
+//instruction: >>add $24, $1, $2<<
+20
+C0
+22
+00
+//instruction: >>add $24, $24, $1<<
+20
+C0
+01
+03
 //instruction: >>add $2, $0, $1<<
 20
 10

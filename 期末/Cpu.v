@@ -26,18 +26,112 @@ module Cpu (
     wire [31:0] alusrc;
     assign alusrc = (instruction[1][31:26] == 0 || instruction[1][31:26] == 4||instruction[1][31:26] == 28) ? rt : {32'b0, immediate};
 
+    reg [4:0] hazard_0, hazard_1, hazard_2, hazard_3;
+
     reg [31:0] rt_delaytemp;
+
+    always @(negedge clka) begin
+        if (instruction[0] == 0);
+        else if(instruction[0][31:26] == 0 && instruction[0][5:0] != 16 && instruction[0][5:0] != 18) begin //r type
+            if (instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+            else if (instruction[0][25:21] == hazard_1 || instruction[0][20:16] == hazard_1)begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+            else if (instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+            else if (instruction[0][25:21] == hazard_3 || instruction[0][20:16] == hazard_3)begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+        end
+        else if((instruction[0][31:26] == 28 && instruction[0][5:0] == 4)
+        || (instruction[0][31:26] == 4 )
+        || (instruction[0][31:26] == 43 ) ) begin //maddu || beq || sw
+            if (instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+            else if (instruction[0][25:21] == hazard_1 || instruction[0][20:16] == hazard_1)begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+            else if (instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+            else if (instruction[0][25:21] == hazard_3 || instruction[0][20:16] == hazard_3)begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+        end
+
+        else if((instruction[0][31:26] == 35 )
+        || (instruction[0][31:26] == 9 ) ) begin //lw ||addiu 
+            if (instruction[0][20:16] == hazard_0) begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end else if (instruction[0][20:16] == hazard_1) begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end else if (instruction[0][20:16] == hazard_2) begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end else if (instruction[0][20:16] == hazard_3) begin
+                instruction[0] <= 0;
+                register[31]   <= register[31] - 4;
+            end
+        end
+
+
+    end
+
+
     always @(posedge clka) begin
         // ram to IF
-        instruction[0]       <= {ram[pc+3], ram[pc+2], ram[pc+1], ram[pc]};
+        instruction[0] <= {ram[pc+3], ram[pc+2], ram[pc+1], ram[pc]};
 
         // IF to ID
-        instruction[1]       <= instruction[0];
-        rs                   <= register[instruction[0][25:21]];
-        rt                   <= register[instruction[0][20:16]];
-        shamt                <= instruction[0][10:6];
-        Signal               <= instruction[0][5:0];
-        immediate            <= {{16{instruction[0][15]}}, instruction[0][15:0]};
+        instruction[1] <= instruction[0];
+        rs             <= register[instruction[0][25:21]];
+        rt             <= register[instruction[0][20:16]];
+        shamt          <= instruction[0][10:6];
+        Signal         <= instruction[0][5:0];
+        immediate      <= {{16{instruction[0][15]}}, instruction[0][15:0]};
+
+
+        //hazard detection
+        if (instruction[0][31:26] == 0 && instruction[0][5:0] == 32) begin  //add
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 34) begin  //sub
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 36) begin  //and
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 37) begin  //or
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 2) begin  //srl
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 42) begin  //slt
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 16) begin  //mfhi
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 0 && instruction[0][5:0] == 17) begin  //mflo
+            hazard_0 <= instruction[0][15:11];
+        end else if (instruction[0][31:26] == 43) begin  //sw
+            hazard_0 <= instruction[0][20:16];
+        end else if (instruction[0][31:26] == 9) begin  //addiu
+            hazard_0 <= instruction[0][20:16];
+        end else hazard_0 <= 0;
+
+        hazard_1             <= hazard_0;
+        hazard_2             <= hazard_1;
+        hazard_3             <= hazard_2;
+
 
         // ID to EX
         instruction[2]       <= instruction[1];
