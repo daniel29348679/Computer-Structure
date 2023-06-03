@@ -26,7 +26,7 @@ module Cpu (
     wire [31:0] alusrc;
     assign alusrc = (instruction[1][31:26] == 0 || instruction[1][31:26] == 4||instruction[1][31:26] == 28) ? rt : {32'b0, immediate};
 
-    reg [4:0] hazard_0, hazard_1, hazard_2, hazard_3;
+    reg [4:0] hazard_0, hazard_1, hazard_2;
 
     reg [31:0] rt_delaytemp;
 
@@ -42,10 +42,6 @@ module Cpu (
                 register[31]   <= register[31] - 4;
             end
             else if (instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)begin
-                instruction[0] <= 0;
-                register[31]   <= register[31] - 4;
-            end
-            else if (instruction[0][25:21] == hazard_3 || instruction[0][20:16] == hazard_3)begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
@@ -65,10 +61,6 @@ module Cpu (
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
-            else if (instruction[0][25:21] == hazard_3 || instruction[0][20:16] == hazard_3)begin
-                instruction[0] <= 0;
-                register[31]   <= register[31] - 4;
-            end
         end
 
         else if((instruction[0][31:26] == 35 )
@@ -80,9 +72,6 @@ module Cpu (
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end else if (instruction[0][20:16] == hazard_2) begin
-                instruction[0] <= 0;
-                register[31]   <= register[31] - 4;
-            end else if (instruction[0][20:16] == hazard_3) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
@@ -130,7 +119,6 @@ module Cpu (
 
         hazard_1             <= hazard_0;
         hazard_2             <= hazard_1;
-        hazard_3             <= hazard_2;
 
 
         // ID to EX
