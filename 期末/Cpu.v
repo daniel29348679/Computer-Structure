@@ -33,15 +33,15 @@ module Cpu (
     always @(negedge clka) begin
         if (instruction[0] == 0);
         else if(instruction[0][31:26] == 0 && instruction[0][5:0] != 16 && instruction[0][5:0] != 18) begin //r type
-            if (instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) begin
+            if ((instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) && hazard_0 != 0 ) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
-            else if (instruction[0][25:21] == hazard_1 || instruction[0][20:16] == hazard_1)begin
+            else if ((instruction[0][25:21] == hazard_1 || instruction[0][20:16] == hazard_1)&& hazard_1 != 0 )begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
-            else if (instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)begin
+            else if ((instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)&& hazard_2 != 0 )begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
@@ -49,15 +49,15 @@ module Cpu (
         else if((instruction[0][31:26] == 28 && instruction[0][5:0] == 4)
         || (instruction[0][31:26] == 4 )
         || (instruction[0][31:26] == 43 ) ) begin //maddu || beq || sw
-            if (instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) begin
+            if ((instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0)&& hazard_0 != 0 ) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
-            else if (instruction[0][25:21] == hazard_1 || instruction[0][20:16] == hazard_1)begin
+            else if ((instruction[0][25:21] == hazard_1 || instruction[0][20:16] == hazard_1)&& hazard_1 != 0 )begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
-            else if (instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)begin
+            else if ((instruction[0][25:21] == hazard_2 || instruction[0][20:16] == hazard_2)&& hazard_2 != 0 )begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end
@@ -65,13 +65,13 @@ module Cpu (
 
         else if((instruction[0][31:26] == 35 )
         || (instruction[0][31:26] == 9 ) ) begin //lw ||addiu 
-            if (instruction[0][20:16] == hazard_0) begin
+            if (instruction[0][20:16] == hazard_0 && hazard_0 != 0) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
-            end else if (instruction[0][20:16] == hazard_1) begin
+            end else if (instruction[0][20:16] == hazard_1 && hazard_1 != 0) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
-            end else if (instruction[0][20:16] == hazard_2) begin
+            end else if (instruction[0][20:16] == hazard_2 && hazard_2 != 0) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
             end

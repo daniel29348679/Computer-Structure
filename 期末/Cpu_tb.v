@@ -29,7 +29,7 @@ module Cpu_tb ();
         $readmemh("reg.txt", cpu.register);
         $readmemh("data_mem.txt", cpu.memory.mem_array);
 
-        #2300 $finish;
+        #3300 $finish;
     end
 
     always @(posedge clka) begin
