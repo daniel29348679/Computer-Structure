@@ -31,6 +31,7 @@ module Cpu (
     reg [31:0] rt_delaytemp;
 
     always @(negedge clka) begin
+        register[0] <= 0;  //$zero always 0
         if (instruction[0] == 0);
         else if(instruction[0][31:26] == 0 && instruction[0][5:0] != 16 && instruction[0][5:0] != 18) begin //r type
             if ((instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) && hazard_0 != 0 ) begin
