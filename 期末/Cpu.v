@@ -30,10 +30,12 @@ module Cpu (
 
     reg [31:0] rt_delaytemp;
 
+    reg branchorjump;
+
     always @(negedge clka) begin
         register[0] <= 0;  //$zero always 0
         if (instruction[0] == 0);
-        else if(instruction[0][31:26] == 0 && instruction[0][5:0] != 16 && instruction[0][5:0] != 18) begin //r type
+        else if(instruction[0][31:26] == 0 && instruction[0][5:0] != 16 && instruction[0][5:0] != 18&& instruction[0][5:0] != 2) begin //r type
             if ((instruction[0][25:21] == hazard_0 || instruction[0][20:16] == hazard_0) && hazard_0 != 0 ) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
@@ -65,7 +67,9 @@ module Cpu (
         end
 
         else if((instruction[0][31:26] == 35 )
-        || (instruction[0][31:26] == 9 ) ) begin //lw ||addiu 
+        || (instruction[0][31:26] == 9 )
+        || (instruction[0][31:26] == 0 && instruction[0][5:0] == 2)
+        ) begin //lw ||addiu ||srl
             if (instruction[0][20:16] == hazard_0 && hazard_0 != 0) begin
                 instruction[0] <= 0;
                 register[31]   <= register[31] - 4;
@@ -78,6 +82,13 @@ module Cpu (
             end
         end
 
+        if (branchorjump == 1) begin
+            branchorjump   <= 0;
+            instruction[3] <= 0;
+            instruction[2] <= 0;
+            instruction[1] <= 0;
+            instruction[0] <= 0;
+        end
 
     end
 
@@ -148,9 +159,11 @@ module Cpu (
             //$display("beq, time = %d, immediate_delay = %d !!!!!!!!!!!!!\n", $time,
             //immediate_delay2);
             register[31] <= (register[31] + 4) + (immediate_delay2 << 2);
+            branchorjump <= 1;
         end else if (instruction[3][31:26] == 2) begin
             register[31][27:2] <= instruction[3][25:0];
-            register[31][1:0]  <= 2'b00;
+            register[31][1:0] <= 2'b00;
+            branchorjump <= 1;
         end else register[31] <= register[31] + 4;
     end
 
