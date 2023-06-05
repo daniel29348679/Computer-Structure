@@ -1,5 +1,9 @@
 $date
+<<<<<<< HEAD
 	Mon Jun 05 17:39:23 2023
+=======
+	Thu Jun 01 15:09:46 2023
+>>>>>>> 23e4b08 (datapath)
 $end
 $version
 	Icarus Verilog
